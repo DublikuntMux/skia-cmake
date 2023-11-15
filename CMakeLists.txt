@@ -1015,8 +1015,7 @@ if(SKIA_GANESH)
   target_compile_definitions(skia PUBLIC SK_GANESH)
 endif()
 
-target_link_libraries(skia PUBLIC png expat zlib gif 
-                                  glfw 
+target_link_libraries(skia PUBLIC glfw 
                                   $<IF:$<TARGET_EXISTS:libjpeg-turbo::turbojpeg>,libjpeg-turbo::turbojpeg,libjpeg-turbo::turbojpeg-static>
                                   $<$<NOT:$<PLATFORM_ID:Windows>>:-ldl>
 )
