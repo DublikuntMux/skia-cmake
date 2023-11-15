@@ -71,7 +71,7 @@ private:
     void bindGraphicsPipeline(const GraphicsPipeline*);
     void setBlendConstants(float* blendConstants);
 
-    void bindUniformBuffer(const BindBufferInfo& info, UniformSlot);
+    void bindUniformBuffer(const BindUniformBufferInfo& info, UniformSlot);
     void bindDrawBuffers(const BindBufferInfo& vertices,
                          const BindBufferInfo& instances,
                          const BindBufferInfo& indices,
@@ -140,6 +140,7 @@ private:
 
     std::array<const DawnBuffer*, DawnGraphicsPipeline::kNumUniformBuffers> fBoundUniformBuffers;
     std::array<uint32_t, DawnGraphicsPipeline::kNumUniformBuffers> fBoundUniformBufferOffsets;
+    std::array<uint32_t, DawnGraphicsPipeline::kNumUniformBuffers> fBoundUniformBufferSizes;
 
     wgpu::CommandEncoder fCommandEncoder;
     wgpu::RenderPassEncoder fActiveRenderPassEncoder;
@@ -149,6 +150,9 @@ private:
     size_t fCurrentIndirectBufferOffset = 0;
 
     wgpu::Buffer fIntrinsicConstantBuffer;
+    int fIntrinsicConstantBufferSlotsUsed = 0;
+    wgpu::Buffer fUnusedUniformBuffer;
+    wgpu::Buffer fUnusedStorageBuffer;
 
     const DawnGraphicsPipeline* fActiveGraphicsPipeline = nullptr;
     const DawnComputePipeline* fActiveComputePipeline = nullptr;

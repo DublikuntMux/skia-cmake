@@ -6,6 +6,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 option(SKIA_SHARED "Build shared Skia" OFF)
 option(SKIA_STATIC "Build static Skia" ON)
+option(SKIA_GANESH "Build Skia with ganesh" ON)
 
 if (SKIA_STATIC)
   set(SKIA_SHARED OFF)
@@ -1004,7 +1005,10 @@ FetchContent_MakeAvailable(glfw)
 
 target_compile_definitions(skia PRIVATE SKIA_IMPLEMENTATION=1)
 target_compile_definitions(skia PUBLIC SK_RELEASE)
-target_compile_definitions(skia PUBLIC SK_GANESH)
+
+if(SKIA_GANESH)
+  target_compile_definitions(skia PUBLIC SK_GANESH)
+endif()
 
 target_link_libraries(skia PUBLIC png expat zlib gif 
                                   glfw 

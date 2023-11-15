@@ -150,25 +150,15 @@ wgpu::RenderPipeline DawnResourceProvider::findOrCreateBlitWithDrawPipeline(
 
 sk_sp<Texture> DawnResourceProvider::createWrappedTexture(const BackendTexture& texture) {
     // Convert to smart pointers. wgpu::Texture* constructor will increment the ref count.
-    wgpu::Texture dawnTexture         = texture.getDawnTexturePtr();
-    wgpu::TextureView dawnTextureView = texture.getDawnTextureViewPtr();
-    SkASSERT(!dawnTexture || !dawnTextureView);
-
-    if (!dawnTexture && !dawnTextureView) {
+    wgpu::Texture dawnTexture = texture.getDawnTexturePtr();
+    if (!dawnTexture) {
         return {};
     }
 
-    if (dawnTexture) {
-        return DawnTexture::MakeWrapped(this->dawnSharedContext(),
-                                        texture.dimensions(),
-                                        texture.info(),
-                                        std::move(dawnTexture));
-    } else {
-        return DawnTexture::MakeWrapped(this->dawnSharedContext(),
-                                        texture.dimensions(),
-                                        texture.info(),
-                                        std::move(dawnTextureView));
-    }
+    return DawnTexture::MakeWrapped(this->dawnSharedContext(),
+                                    texture.dimensions(),
+                                    texture.info(),
+                                    std::move(dawnTexture));
 }
 
 sk_sp<DawnTexture> DawnResourceProvider::findOrCreateDiscardableMSAALoadTexture(
@@ -181,6 +171,7 @@ sk_sp<DawnTexture> DawnResourceProvider::findOrCreateDiscardableMSAALoadTexture(
     dawnMsaaLoadTextureInfo.fSampleCount = 1;
     dawnMsaaLoadTextureInfo.fUsage |= wgpu::TextureUsage::TextureBinding;
 
+#if !defined(__EMSCRIPTEN__)
     // MSAA texture can be transient attachment (memoryless) but the load texture cannot be.
     // This is because the load texture will need to have its content retained between two passes
     // loading:
@@ -188,6 +179,7 @@ sk_sp<DawnTexture> DawnResourceProvider::findOrCreateDiscardableMSAALoadTexture(
     // - 2nd pass: the actual render pass is started and the load texture is blitted to the MSAA
     // texture.
     dawnMsaaLoadTextureInfo.fUsage &= (~wgpu::TextureUsage::TransientAttachment);
+#endif
 
     auto texture = this->findOrCreateDiscardableMSAAAttachment(dimensions, dawnMsaaLoadTextureInfo);
 
@@ -200,6 +192,7 @@ sk_sp<GraphicsPipeline> DawnResourceProvider::createGraphicsPipeline(
         const RenderPassDesc& renderPassDesc) {
     SkSL::Compiler skslCompiler(fSharedContext->caps()->shaderCaps());
     return DawnGraphicsPipeline::Make(this->dawnSharedContext(),
+                                      this,
                                       &skslCompiler,
                                       runtimeDict,
                                       pipelineDesc,
@@ -245,14 +238,54 @@ void DawnResourceProvider::onDeleteBackendTexture(const BackendTexture& texture)
     SkASSERT(texture.isValid());
     SkASSERT(texture.backend() == BackendApi::kDawn);
 
-    // Automatically release the pointers in wgpu::TextureView & wgpu::Texture's dtor.
+    // Automatically release the pointers in wgpu::Texture's dtor.
     // Acquire() won't increment the ref count.
-    wgpu::TextureView::Acquire(texture.getDawnTextureViewPtr());
     wgpu::Texture::Acquire(texture.getDawnTexturePtr());
 }
 
 const DawnSharedContext* DawnResourceProvider::dawnSharedContext() const {
     return static_cast<const DawnSharedContext*>(fSharedContext);
+}
+
+const wgpu::BindGroupLayout& DawnResourceProvider::getOrCreateUniformBuffersBindGroupLayout() {
+    if (fUniformBuffersBindGroupLayout) {
+        return fUniformBuffersBindGroupLayout;
+    }
+
+    std::array<wgpu::BindGroupLayoutEntry, 3> entries;
+    entries[0].binding = DawnGraphicsPipeline::kIntrinsicUniformBufferIndex;
+    entries[0].visibility = wgpu::ShaderStage::Vertex | wgpu::ShaderStage::Fragment;
+    entries[0].buffer.type = wgpu::BufferBindingType::Uniform;
+    entries[0].buffer.hasDynamicOffset = true;
+    entries[0].buffer.minBindingSize = 0;
+
+    entries[1].binding = DawnGraphicsPipeline::kRenderStepUniformBufferIndex;
+    entries[1].visibility = wgpu::ShaderStage::Vertex | wgpu::ShaderStage::Fragment;
+    entries[1].buffer.type = fSharedContext->caps()->storageBufferPreferred()
+                                     ? wgpu::BufferBindingType::ReadOnlyStorage
+                                     : wgpu::BufferBindingType::Uniform;
+    entries[1].buffer.hasDynamicOffset = true;
+    entries[1].buffer.minBindingSize = 0;
+
+    entries[2].binding = DawnGraphicsPipeline::kPaintUniformBufferIndex;
+    entries[2].visibility = wgpu::ShaderStage::Fragment;
+    entries[2].buffer.type = fSharedContext->caps()->storageBufferPreferred()
+                                     ? wgpu::BufferBindingType::ReadOnlyStorage
+                                     : wgpu::BufferBindingType::Uniform;
+    entries[2].buffer.hasDynamicOffset = true;
+    entries[2].buffer.minBindingSize = 0;
+
+    wgpu::BindGroupLayoutDescriptor groupLayoutDesc;
+#if defined(SK_DEBUG)
+    groupLayoutDesc.label = "Uniform buffers bind group layout";
+#endif
+
+    groupLayoutDesc.entryCount = entries.size();
+    groupLayoutDesc.entries = entries.data();
+    fUniformBuffersBindGroupLayout =
+            this->dawnSharedContext()->device().CreateBindGroupLayout(&groupLayoutDesc);
+
+    return fUniformBuffersBindGroupLayout;
 }
 
 } // namespace skgpu::graphite

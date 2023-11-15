@@ -32,7 +32,7 @@ public:
     GrRecordingContext* asRecordingContext() { return this->context()->asRecordingContext(); }
     GrDirectContext* asDirectContext() { return this->context()->asDirectContext(); }
 
-    skgpu::ShaderErrorHandler* getShaderErrorHandler() const;
+    GrContextOptions::ShaderErrorHandler* getShaderErrorHandler() const;
 
 protected:
     explicit GrBaseContextPriv(GrContext_Base* context) : fContext(context) {}

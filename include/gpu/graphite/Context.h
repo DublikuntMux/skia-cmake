@@ -22,6 +22,7 @@
 
 class SkColorSpace;
 class SkRuntimeEffect;
+class SkTraceMemoryDump;
 
 namespace skgpu::graphite {
 
@@ -146,6 +147,17 @@ public:
      * Returns the number of bytes of gpu memory currently budgeted in the Context's cache.
      */
     size_t currentBudgetedBytes() const;
+
+    /**
+     * Enumerates all cached GPU resources owned by the Context and dumps their memory to
+     * traceMemoryDump.
+     */
+    void dumpMemoryStatistics(SkTraceMemoryDump* traceMemoryDump) const;
+
+    /*
+     * Does this context support protected content?
+     */
+    bool supportsProtectedContent() const;
 
     // Provides access to functions that aren't part of the public API.
     ContextPriv priv();

@@ -17,6 +17,7 @@
 #include <atomic>
 
 class SkMutex;
+class SkTraceMemoryDump;
 
 namespace skgpu::graphite {
 
@@ -93,6 +94,42 @@ public:
     // aren't aware of additional padding or copies made by the driver.
     size_t gpuMemorySize() const { return fGpuMemorySize; }
 
+    class UniqueID {
+    public:
+        UniqueID() = default;
+
+        explicit UniqueID(uint32_t id) : fID(id) {}
+
+        uint32_t asUInt() const { return fID; }
+
+        bool operator==(const UniqueID& other) const { return fID == other.fID; }
+        bool operator!=(const UniqueID& other) const { return !(*this == other); }
+
+    private:
+        uint32_t fID = SK_InvalidUniqueID;
+    };
+
+    // Gets an id that is unique for this Resource object. It is static in that it does not change
+    // when the content of the Resource object changes. This will never return 0.
+    UniqueID uniqueID() const { return fUniqueID; }
+
+    // Describes the type of gpu resource that is represented by the implementing
+    // class (e.g. texture, buffer, etc).  This data is used for diagnostic
+    // purposes by dumpMemoryStatistics().
+    //
+    // The value returned is expected to be long lived and will not be copied by the caller.
+    virtual const char* getResourceType() const = 0;
+
+    std::string getLabel() const { return fLabel; }
+
+    // We allow the label on a Resource to change when used for a different function. For example
+    // when reusing a scratch Texture we can change the label to match callers current use.
+    void setLabel(std::string_view label) {
+        fLabel = label;
+        // TODO: call into subclasses to allow them to set the label on actual GPU objects if they
+        // want to.
+    }
+
     // Tests whether a object has been abandoned or released. All objects will be in this state
     // after their creating Context is destroyed or abandoned.
     //
@@ -111,6 +148,9 @@ public:
         fKey = key;
     }
 
+    // Dumps memory usage information for this Resource to traceMemoryDump.
+    void dumpMemoryStatistics(SkTraceMemoryDump* traceMemoryDump) const;
+
 #if defined(GRAPHITE_TEST_UTILS)
     bool testingShouldDeleteASAP() const { return fDeleteASAP == DeleteASAP::kYes; }
 
@@ -118,7 +158,11 @@ public:
 #endif
 
 protected:
-    Resource(const SharedContext*, Ownership, skgpu::Budgeted, size_t gpuMemorySize);
+    Resource(const SharedContext*,
+             Ownership,
+             skgpu::Budgeted,
+             size_t gpuMemorySize,
+             std::string_view label);
     virtual ~Resource();
 
     const SharedContext* sharedContext() const { return fSharedContext; }
@@ -284,9 +328,9 @@ private:
     mutable size_t fGpuMemorySize = kInvalidGpuMemorySize;
 
     // All resource created internally by Graphite and held in the ResourceCache as a shared
-    // shared resource or available scratch resource are considered budgeted. Resources that back
-    // client owned objects (e.g. SkSurface or SkImage) are not budgeted and do not count against
-    // cache limits.
+    // resource or available scratch resource are considered budgeted. Resources that back client
+    // owned objects (e.g. SkSurface or SkImage) are not budgeted and do not count against cache
+    // limits.
     skgpu::Budgeted fBudgeted;
 
     // This is only used by ProxyCache::purgeProxiesNotUsedSince which is called from
@@ -303,6 +347,11 @@ private:
     // by the cache.
     uint32_t fTimestamp;
     skgpu::StdSteadyClock::time_point fLastAccess;
+
+    const UniqueID fUniqueID;
+
+    // String used to describe the current use of this Resource.
+    std::string fLabel;
 
     // This is only used during validation checking. Lots of the validation code depends on a
     // resource being purgeable or not. However, purgeable itself just means having no refs. The
