@@ -18,8 +18,32 @@ if(UNIX AND NOT APPLE)
   find_package(Freetype)
 endif()
 
-
 set(skia_sources
+    src/base/SkArenaAlloc.cpp
+    src/base/SkBase64.cpp
+    src/base/SkBezierCurves.cpp
+    src/base/SkBlockAllocator.cpp
+    src/base/SkBuffer.cpp
+    src/base/SkContainers.cpp
+    src/base/SkCubics.cpp
+    src/base/SkDebug.cpp
+    src/base/SkDeque.cpp
+    src/base/SkFloatingPoint.cpp
+    src/base/SkHalf.cpp
+    src/base/SkMalloc.cpp
+    src/base/SkMathPriv.cpp
+    src/base/SkQuads.cpp
+    src/base/SkSafeMath.cpp
+    src/base/SkSemaphore.cpp
+    src/base/SkSharedMutex.cpp
+    src/base/SkSpinlock.cpp
+    src/base/SkTDArray.cpp
+    src/base/SkTSearch.cpp
+    src/base/SkThreadID.cpp
+    src/base/SkTime.cpp
+    src/base/SkUTF.cpp
+    src/base/SkUtils.cpp
+
     src/codec/SkBmpBaseCodec.cpp
     src/codec/SkBmpCodec.cpp
     src/codec/SkBmpMaskCodec.cpp
