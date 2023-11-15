@@ -6,9 +6,16 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 option(SKIA_SHARED "Build shared Skia" OFF)
 option(SKIA_STATIC "Build static Skia" ON)
-option(SKIA_GANESH "Build Skia with ganesh" ON)
+option(SKIA_GANESH "Build Skia with ganesh" OFF)
+option(SKIA_PNG "Build Skia with png support" OFF)
+option(SKIA_WEBP "Build Skia with webp support" OFF)
+option(SKIA_PDF "Build Skia with PDF support" OFF)
+option(SKIA_XML "Build Skia with xml support" OFF)
+option(SKIA_GLFW "Build Skia with glfw support" OFF)
 
-if (SKIA_STATIC)
+if(SKIA_STATIC AND SKIA_STATIC)
+  message(ERROR "You cna only use one of SKIA_STATIC, SKIA_STATIC")
+elseif(SKIA_STATIC)
   set(SKIA_SHARED OFF)
 elseif(SKIA_SHARED)
   set(SKIA_STATIC OFF)
@@ -57,18 +64,10 @@ set(skia_sources
     src/codec/SkHeifCodec.cpp
     src/codec/SkIcoCodec.cpp
     src/codec/SkImageGenerator_FromEncoded.cpp
-    src/codec/SkJpegCodec.cpp
-    src/codec/SkJpegDecoderMgr.cpp
-    src/codec/SkJpegMultiPicture.cpp
-    src/codec/SkJpegSegmentScan.cpp
-    src/codec/SkJpegSourceMgr.cpp
-    src/codec/SkJpegUtility.cpp
-    src/codec/SkJpegXmp.cpp
     src/codec/SkMaskSwizzler.cpp
     src/codec/SkMasks.cpp
     src/codec/SkParseEncodedOrigin.cpp
     src/codec/SkPixmapUtils.cpp
-    src/codec/SkPngCodec.cpp
     src/codec/SkSampledCodec.cpp
     src/codec/SkSampler.cpp
     src/codec/SkSwizzler.cpp
@@ -113,6 +112,7 @@ set(skia_sources
     src/core/SkChecksum.cpp
     src/core/SkClipStack.cpp
     src/core/SkClipStackDevice.cpp
+    src/core/SkCpu.cpp
     src/core/SkColor.cpp
     src/core/SkColorFilter.cpp
     src/core/SkColorSpace.cpp
@@ -310,6 +310,10 @@ set(skia_sources
     src/effects/imagefilters/SkRuntimeImageFilter.cpp
     src/effects/imagefilters/SkShaderImageFilter.cpp
 
+    src/encode/SkEncoder.cpp
+    src/encode/SkICC.cpp
+    src/encode/SkJpegEncoder_none.cpp
+
     src/fonts/SkFontMgr_indirect.cpp
     src/fonts/SkRemotableFontMgr.cpp
 
@@ -464,31 +468,6 @@ set(skia_sources
     src/pathops/SkPathOpsWinding.cpp
     src/pathops/SkPathWriter.cpp
     src/pathops/SkReduceOrder.cpp
-
-    src/pdf/SkClusterator.cpp
-    src/pdf/SkDeflate.cpp
-    src/pdf/SkDocument_PDF_None.cpp
-    src/pdf/SkJpegInfo_libjpegturbo.cpp
-    src/pdf/SkJpegInfo_none.cpp
-    src/pdf/SkKeyedImage.cpp
-    src/pdf/SkPDFBitmap.cpp
-    src/pdf/SkPDFDevice.cpp
-    src/pdf/SkPDFDocument.cpp
-    src/pdf/SkPDFFont.cpp
-    src/pdf/SkPDFFormXObject.cpp
-    src/pdf/SkPDFGradientShader.cpp
-    src/pdf/SkPDFGraphicStackState.cpp
-    src/pdf/SkPDFGraphicState.cpp
-    src/pdf/SkPDFMakeCIDGlyphWidthsArray.cpp
-    src/pdf/SkPDFMakeToUnicodeCmap.cpp
-    src/pdf/SkPDFMetadata.cpp
-    src/pdf/SkPDFResourceDict.cpp
-    src/pdf/SkPDFShader.cpp
-    src/pdf/SkPDFSubsetFont.cpp
-    src/pdf/SkPDFTag.cpp
-    src/pdf/SkPDFType1Font.cpp
-    src/pdf/SkPDFTypes.cpp
-    src/pdf/SkPDFUtils.cpp
 
     src/ports/SkDiscardableMemory_none.cpp
     src/ports/SkFontHost_FreeType.cpp
@@ -674,12 +653,27 @@ set(skia_sources
     src/utils/SkTestCanvas.cpp
     src/utils/SkTextUtils.cpp
 
-    src/xml/SkDOM.cpp
-    src/xml/SkXMLParser.cpp
-    src/xml/SkXMLWriter.cpp
+    src/text/GlyphRun.cpp
+    src/text/SlugFromBuffer.cpp
+    src/text/StrikeForGPU.cpp
+    src/text/gpu/DistanceFieldAdjustTable.cpp
+    src/text/gpu/GlyphVector.cpp
+    src/text/gpu/SDFMaskFilter.cpp
+    src/text/gpu/SDFTControl.cpp
+    src/text/gpu/SkChromeRemoteGlyphCache.cpp
+    src/text/gpu/Slug.cpp
+    src/text/gpu/SlugImpl.cpp
+    src/text/gpu/StrikeCache.cpp
+    src/text/gpu/SubRunAllocator.cpp
+    src/text/gpu/SubRunContainer.cpp
+    src/text/gpu/TextBlob.cpp
+    src/text/gpu/TextBlobRedrawCoordinator.cpp
+    src/text/gpu/VertexFiller.cpp
 
     third_party/etc1/etc1.cpp
     third_party/icu/SkLoadICU.cpp
+
+    modules/skcms/skcms.cc
 )
 
 if(SKIA_GANESH)
@@ -840,7 +834,6 @@ if(SKIA_GANESH)
   src/gpu/ganesh/gl/GrGLGpu.cpp
   src/gpu/ganesh/gl/GrGLGpuProgramCache.cpp
   src/gpu/ganesh/gl/GrGLInterfaceAutogen.cpp
-  src/gpu/ganesh/gl/GrGLMakeNativeInterface_none.cpp
   src/gpu/ganesh/gl/GrGLOpsRenderPass.cpp
   src/gpu/ganesh/gl/GrGLProgram.cpp
   src/gpu/ganesh/gl/GrGLProgramDataManager.cpp
@@ -854,12 +847,6 @@ if(SKIA_GANESH)
   src/gpu/ganesh/gl/GrGLVertexArray.cpp
   src/gpu/ganesh/gl/builders/GrGLProgramBuilder.cpp
   src/gpu/ganesh/gl/builders/GrGLShaderStringBuilder.cpp
-  src/gpu/ganesh/gl/egl/GrGLMakeEGLInterface.cpp
-  src/gpu/ganesh/gl/egl/GrGLMakeNativeInterface_egl.cpp
-  src/gpu/ganesh/gl/glfw/GrGLMakeNativeInterface_glfw.cpp
-  src/gpu/ganesh/gl/mac/GrGLMakeNativeInterface_mac.cpp
-  src/gpu/ganesh/gl/webgl/GrGLMakeNativeInterface_webgl.cpp
-  src/gpu/ganesh/gl/win/GrGLMakeNativeInterface_win.cpp
   src/gpu/ganesh/glsl/GrGLSLBlend.cpp
   src/gpu/ganesh/glsl/GrGLSLFragmentShaderBuilder.cpp
   src/gpu/ganesh/glsl/GrGLSLProgramBuilder.cpp
@@ -931,7 +918,70 @@ if(SKIA_GANESH)
   )
 endif()
 
-add_definitions(-DSK_HAS_PNG_LIBRARY)
+if(SKIA_PDF)
+list(APPEND skia_sources
+    src/pdf/SkClusterator.cpp
+    src/pdf/SkDeflate.cpp
+    src/pdf/SkDocument_PDF_None.cpp
+    src/pdf/SkJpegInfo_none.cpp
+    src/pdf/SkKeyedImage.cpp
+    src/pdf/SkPDFBitmap.cpp
+    src/pdf/SkPDFDevice.cpp
+    src/pdf/SkPDFDocument.cpp
+    src/pdf/SkPDFFont.cpp
+    src/pdf/SkPDFFormXObject.cpp
+    src/pdf/SkPDFGradientShader.cpp
+    src/pdf/SkPDFGraphicStackState.cpp
+    src/pdf/SkPDFGraphicState.cpp
+    src/pdf/SkPDFMakeCIDGlyphWidthsArray.cpp
+    src/pdf/SkPDFMakeToUnicodeCmap.cpp
+    src/pdf/SkPDFMetadata.cpp
+    src/pdf/SkPDFResourceDict.cpp
+    src/pdf/SkPDFShader.cpp
+    src/pdf/SkPDFSubsetFont.cpp
+    src/pdf/SkPDFTag.cpp
+    src/pdf/SkPDFType1Font.cpp
+    src/pdf/SkPDFTypes.cpp
+    src/pdf/SkPDFUtils.cpp
+)
+endif()
+
+if(SKIA_PNG)
+  add_definitions(-DSK_HAS_PNG_LIBRARY)
+  
+  list(APPEND skia_sources
+    src/codec/SkPngCodec.cpp
+    src/encode/SkPngEncoderImpl.cpp
+  )
+else()
+  list(APPEND skia_sources
+    src/encode/SkPngEncoder_none.cpp
+  )
+endif()
+
+if(SKIA_WEBP)
+  list(APPEND skia_sources
+    src/encode/SkWebpEncoderImpl.cpp
+  )
+else()
+  list(APPEND skia_sources
+    src/encode/SkWebpEncoder_none.cpp
+  )
+endif()
+
+if(SKIA_XML)
+  list(APPEND skia_sources
+    src/xml/SkDOM.cpp
+    src/xml/SkXMLParser.cpp
+    src/xml/SkXMLWriter.cpp
+  )
+endif()
+
+if(SKIA_GLFW)
+  list(APPEND skia_sources
+    src/gpu/ganesh/gl/glfw/GrGLMakeNativeInterface_glfw.cpp
+  )
+endif()
 
 if(WIN32)
   list(APPEND skia_sources
@@ -951,6 +1001,7 @@ if(WIN32)
               src/utils/win/SkHRESULT.cpp
               src/utils/win/SkIStream.cpp
               src/utils/win/SkWGL_win.cpp
+              src/gpu/ganesh/gl/win/GrGLMakeNativeInterface_win.cpp
               )
 endif()
 if(UNIX AND NOT MINGW)
@@ -958,6 +1009,8 @@ if(UNIX AND NOT MINGW)
               src/ports/SkDebug_stdio.cpp
               src/ports/SkOSFile_posix.cpp
               src/ports/SkOSLibrary_posix.cpp
+              src/gpu/ganesh/gl/egl/GrGLMakeEGLInterface.cpp
+              src/gpu/ganesh/gl/egl/GrGLMakeNativeInterface_egl.cpp
              )
   if(APPLE)
     list(APPEND skia_sources
@@ -969,6 +1022,7 @@ if(UNIX AND NOT MINGW)
                 src/ports/SkTypeface_mac_ct.cpp
                 src/utils/mac/SkCreateCGImageRef.cpp
                 src/utils/mac/SkCTFontSmoothBehavior.cpp
+                src/gpu/ganesh/gl/mac/GrGLMakeNativeInterface_mac.cpp
                )
   elseif(LINUX)
     list(APPEND skia_sources
@@ -985,11 +1039,7 @@ if(UNIX AND NOT MINGW)
   endif()
 endif()
 
-if(NOT ARM)
-  if((NOT MSVC) OR (${CMAKE_CXX_COMPILER_ID} MATCHES "Clang"))
-    set_source_files_properties(src/core/SkCpu.cpp PROPERTIES COMPILE_FLAGS -mavx)
-  endif()
-elseif(ARM)
+if(ARM)
   list(APPEND skia_sources
               src/opts/SkBitmapProcState_arm_neon.cpp
               src/opts/SkBitmapProcState_matrixProcs_neon.cpp
@@ -1015,22 +1065,104 @@ elseif(SKIA_STATIC)
                    )
 endif()
 
-find_package(libjpeg-turbo CONFIG REQUIRED)
-
 include(FetchContent)
+include(ExternalProject)
 
 FetchContent_Declare(
+  freetype
+  GIT_REPOSITORY https://github.com/freetype/freetype.git
+  GIT_TAG VER-2-13-2
+)
+
+if(SKIA_WEBP)
+  FetchContent_Declare(
+    libwebp
+    GIT_REPOSITORY https://github.com/webmproject/libwebp.git
+    GIT_TAG main
+  )
+endif()
+
+if(SKIA_PNG)
+  FetchContent_Declare(
+    libpng
+    GIT_REPOSITORY https://github.com/glennrp/libpng.git
+    GIT_TAG v1.6.40
+  )
+endif()
+
+if(SKIA_PNG OR SKIA_PDF)
+  FetchContent_Declare(
+    zlib
+    GIT_REPOSITORY https://github.com/madler/zlib.git
+    GIT_TAG v1.3
+  )
+endif()
+
+if(SKIA_XML)
+  FetchContent_Declare(
+    expat
+    GIT_REPOSITORY https://github.com/libexpat/libexpat.git
+    GIT_TAG master
+  )
+endif()
+
+if(SKIA_XML)
+  FetchContent_Declare(
     glfw
     GIT_REPOSITORY https://github.com/glfw/glfw.git
     GIT_TAG 3.3.8
-)
+  )
+endif()
 
-set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
-set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
-set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
-set(GLFW_INSTALL OFF CACHE BOOL "" FORCE)
+set(FT_DISABLE_BROTLI ON CACHE BOOL "" FORCE)
+set(FT_DISABLE_BZIP2 ON CACHE BOOL "" FORCE)
+set(FT_DISABLE_PNG ON CACHE BOOL "" FORCE)
+set(FT_DISABLE_ZLIB ON CACHE BOOL "" FORCE)
+set(FT_DISABLE_HARFBUZZ ON CACHE BOOL "" FORCE)
 
-FetchContent_MakeAvailable(glfw)
+if(SKIA_WEBP)
+  set(WEBP_BUILD_ANIM_UTILS OFF CACHE BOOL "" FORCE)
+  set(WEBP_BUILD_CWEBP OFF CACHE BOOL "" FORCE)
+  set(WEBP_BUILD_DWEBP OFF CACHE BOOL "" FORCE)
+  set(WEBP_BUILD_GIF2WEBP OFF CACHE BOOL "" FORCE)
+  set(WEBP_BUILD_IMG2WEBP OFF CACHE BOOL "" FORCE)
+  set(WEBP_BUILD_VWEBP OFF CACHE BOOL "" FORCE)
+  set(WEBP_BUILD_WEBPINFO OFF CACHE BOOL "" FORCE)
+  set(WEBP_BUILD_LIBWEBPMUX OFF CACHE BOOL "" FORCE)
+  set(WEBP_BUILD_WEBPMUX  OFF CACHE BOOL "" FORCE)
+  set(WEBP_BUILD_EXTRAS OFF CACHE BOOL "" FORCE)
+
+  FetchContent_MakeAvailable(libwebp)
+endif()
+
+if(SKIA_PNG)
+  set(PNG_SHARED OFF CACHE BOOL "" FORCE)
+  set(PNG_TESTS OFF CACHE BOOL "" FORCE)
+  set(PNG_TOOLS OFF CACHE BOOL "" FORCE)
+endif()
+
+if(SKIA_GLFW)
+  set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
+  set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
+  set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
+  set(GLFW_INSTALL OFF CACHE BOOL "" FORCE)
+
+  FetchContent_MakeAvailable(glfw)
+endif()
+
+FetchContent_MakeAvailable(freetype)
+
+if(SKIA_PNG)
+  FetchContent_MakeAvailable(libpng)
+endif()
+
+if(SKIA_PNG OR SKIA_PDF)
+  FetchContent_MakeAvailable(zlib)
+endif()
+
+if(SKIA_XML)
+  FetchContent_MakeAvailable(expat)
+endif()
 
 target_compile_definitions(skia PRIVATE SKIA_IMPLEMENTATION=1)
 target_compile_definitions(skia PUBLIC SK_RELEASE)
@@ -1039,10 +1171,38 @@ if(SKIA_GANESH)
   target_compile_definitions(skia PUBLIC SK_GANESH)
 endif()
 
-target_link_libraries(skia PUBLIC glfw 
-                                  $<IF:$<TARGET_EXISTS:libjpeg-turbo::turbojpeg>,libjpeg-turbo::turbojpeg,libjpeg-turbo::turbojpeg-static>
-                                  $<$<NOT:$<PLATFORM_ID:Windows>>:-ldl>
+target_link_libraries(skia PUBLIC freetype)
+
+if(SKIA_WEBP)
+  target_link_libraries(skia PUBLIC webp webpdemux)
+endif()
+
+if(SKIA_PNG)
+  target_link_libraries(skia PUBLIC libpng)
+endif()
+
+if(SKIA_PNG OR SKIA_PDF)
+  target_link_libraries(skia PUBLIC zlibstatic)
+endif()
+
+if(SKIA_XML)
+  target_link_libraries(skia PUBLIC expat)
+endif()
+
+if(SKIA_GLFW)
+  target_link_libraries(skia PUBLIC glfw)
+endif()
+
+target_include_directories(skia PUBLIC 
+  ${freetype_SOURCE_DIR}/include
 )
+
+if(SKIA_PNG)
+  target_include_directories(skia PUBLIC 
+    ${libpng_SOURCE_DIR}
+    ${libpng_BINARY_DIR}
+  )
+endif()
 
 if(APPLE)
   target_link_libraries(skia PRIVATE "-framework CoreText"
