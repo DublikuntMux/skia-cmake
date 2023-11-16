@@ -6,23 +6,18 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 option(SKIA_SHARED "Build shared Skia" OFF)
 option(SKIA_STATIC "Build static Skia" ON)
-option(SKIA_GANESH "Build Skia with ganesh" OFF)
 option(SKIA_PNG "Build Skia with png support" OFF)
 option(SKIA_WEBP "Build Skia with webp support" OFF)
 option(SKIA_PDF "Build Skia with PDF support" OFF)
-option(SKIA_XML "Build Skia with xml support" OFF)
+# option(SKIA_XML "Build Skia with xml support" OFF)
 option(SKIA_GLFW "Build Skia with glfw support" OFF)
 
-if(SKIA_STATIC AND SKIA_STATIC)
+if(SKIA_STATIC AND SKIA_SHARED)
   message(ERROR "You cna only use one of SKIA_STATIC, SKIA_STATIC")
 elseif(SKIA_STATIC)
   set(SKIA_SHARED OFF)
 elseif(SKIA_SHARED)
   set(SKIA_STATIC OFF)
-endif()
-
-if(UNIX AND NOT APPLE)
-  find_package(Freetype)
 endif()
 
 set(skia_sources
@@ -317,6 +312,244 @@ set(skia_sources
     src/fonts/SkFontMgr_indirect.cpp
     src/fonts/SkRemotableFontMgr.cpp
 
+    src/gpu/ganesh/ClipStack.cpp
+    src/gpu/ganesh/Device.cpp
+    src/gpu/ganesh/Device_drawTexture.cpp
+    src/gpu/ganesh/GrAHardwareBufferImageGenerator.cpp
+    src/gpu/ganesh/GrAHardwareBufferUtils.cpp
+    src/gpu/ganesh/GrAttachment.cpp
+    src/gpu/ganesh/GrAuditTrail.cpp
+    src/gpu/ganesh/GrBackendSemaphore.cpp
+    src/gpu/ganesh/GrBackendSurface.cpp
+    src/gpu/ganesh/GrBackendTextureImageGenerator.cpp
+    src/gpu/ganesh/GrBackendUtils.cpp
+    src/gpu/ganesh/GrBlurUtils.cpp
+    src/gpu/ganesh/GrBufferAllocPool.cpp
+    src/gpu/ganesh/GrBufferTransferRenderTask.cpp
+    src/gpu/ganesh/GrBufferUpdateRenderTask.cpp
+    src/gpu/ganesh/GrCanvas.cpp
+    src/gpu/ganesh/GrCaps.cpp
+    src/gpu/ganesh/GrClientMappedBufferManager.cpp
+    src/gpu/ganesh/GrColorInfo.cpp
+    src/gpu/ganesh/GrColorSpaceXform.cpp
+    src/gpu/ganesh/GrContextThreadSafeProxy.cpp
+    src/gpu/ganesh/GrContext_Base.cpp
+    src/gpu/ganesh/GrCopyRenderTask.cpp
+    src/gpu/ganesh/GrDDLContext.cpp
+    src/gpu/ganesh/GrDDLTask.cpp
+    src/gpu/ganesh/GrDataUtils.cpp
+    src/gpu/ganesh/GrDefaultGeoProcFactory.cpp
+    src/gpu/ganesh/GrDeferredDisplayList.cpp
+    src/gpu/ganesh/GrDeferredDisplayListRecorder.cpp
+    src/gpu/ganesh/GrDirectContext.cpp
+    src/gpu/ganesh/GrDirectContextPriv.cpp
+    src/gpu/ganesh/GrDistanceFieldGenFromVector.cpp
+    src/gpu/ganesh/GrDrawOpAtlas.cpp
+    src/gpu/ganesh/GrDrawOpTest.cpp
+    src/gpu/ganesh/GrDrawingManager.cpp
+    src/gpu/ganesh/GrDriverBugWorkarounds.cpp
+    src/gpu/ganesh/GrDynamicAtlas.cpp
+    src/gpu/ganesh/GrEagerVertexAllocator.cpp
+    src/gpu/ganesh/GrFinishCallbacks.cpp
+    src/gpu/ganesh/GrFixedClip.cpp
+    src/gpu/ganesh/GrFragmentProcessor.cpp
+    src/gpu/ganesh/GrFragmentProcessors.cpp
+    src/gpu/ganesh/GrGeometryProcessor.cpp
+    src/gpu/ganesh/GrGpu.cpp
+    src/gpu/ganesh/GrGpuBuffer.cpp
+    src/gpu/ganesh/GrGpuResource.cpp
+    src/gpu/ganesh/GrImageContext.cpp
+    src/gpu/ganesh/GrImageInfo.cpp
+    src/gpu/ganesh/GrManagedResource.cpp
+    src/gpu/ganesh/GrMemoryPool.cpp
+    src/gpu/ganesh/GrMeshBuffers.cpp
+    src/gpu/ganesh/GrMeshDrawTarget.cpp
+    src/gpu/ganesh/GrOnFlushResourceProvider.cpp
+    src/gpu/ganesh/GrOpFlushState.cpp
+    src/gpu/ganesh/GrOpsRenderPass.cpp
+    src/gpu/ganesh/GrPaint.cpp
+    src/gpu/ganesh/GrPersistentCacheUtils.cpp
+    src/gpu/ganesh/GrPipeline.cpp
+    src/gpu/ganesh/GrProcessor.cpp
+    src/gpu/ganesh/GrProcessorAnalysis.cpp
+    src/gpu/ganesh/GrProcessorSet.cpp
+    src/gpu/ganesh/GrProcessorUnitTest.cpp
+    src/gpu/ganesh/GrProgramDesc.cpp
+    src/gpu/ganesh/GrProgramInfo.cpp
+    src/gpu/ganesh/GrPromiseImageTexture.cpp
+    src/gpu/ganesh/GrProxyProvider.cpp
+    src/gpu/ganesh/GrRecordingContext.cpp
+    src/gpu/ganesh/GrRecordingContextPriv.cpp
+    src/gpu/ganesh/GrRenderTarget.cpp
+    src/gpu/ganesh/GrRenderTargetProxy.cpp
+    src/gpu/ganesh/GrRenderTask.cpp
+    src/gpu/ganesh/GrRenderTaskCluster.cpp
+    src/gpu/ganesh/GrResourceAllocator.cpp
+    src/gpu/ganesh/GrResourceCache.cpp
+    src/gpu/ganesh/GrResourceProvider.cpp
+    src/gpu/ganesh/GrRingBuffer.cpp
+    src/gpu/ganesh/GrSPIRVUniformHandler.cpp
+    src/gpu/ganesh/GrSPIRVVaryingHandler.cpp
+    src/gpu/ganesh/GrSWMaskHelper.cpp
+    src/gpu/ganesh/GrShaderCaps.cpp
+    src/gpu/ganesh/GrShaderVar.cpp
+    src/gpu/ganesh/GrStagingBufferManager.cpp
+    src/gpu/ganesh/GrStencilSettings.cpp
+    src/gpu/ganesh/GrStyle.cpp
+    src/gpu/ganesh/GrSurface.cpp
+    src/gpu/ganesh/GrSurfaceCharacterization.cpp
+    src/gpu/ganesh/GrSurfaceProxy.cpp
+    src/gpu/ganesh/GrSurfaceProxyView.cpp
+    src/gpu/ganesh/GrTestUtils.cpp
+    src/gpu/ganesh/GrTexture.cpp
+    src/gpu/ganesh/GrTextureProxy.cpp
+    src/gpu/ganesh/GrTextureRenderTargetProxy.cpp
+    src/gpu/ganesh/GrTextureResolveRenderTask.cpp
+    src/gpu/ganesh/GrThreadSafeCache.cpp
+    src/gpu/ganesh/GrThreadSafePipelineBuilder.cpp
+    src/gpu/ganesh/GrTransferFromRenderTask.cpp
+    src/gpu/ganesh/GrUniformDataManager.cpp
+    src/gpu/ganesh/GrUtil.cpp
+    src/gpu/ganesh/GrVertexChunkArray.cpp
+    src/gpu/ganesh/GrWaitRenderTask.cpp
+    src/gpu/ganesh/GrWritePixelsRenderTask.cpp
+    src/gpu/ganesh/GrXferProcessor.cpp
+    src/gpu/ganesh/GrYUVABackendTextures.cpp
+    src/gpu/ganesh/GrYUVATextureProxies.cpp
+    src/gpu/ganesh/PathRenderer.cpp
+    src/gpu/ganesh/PathRendererChain.cpp
+    src/gpu/ganesh/SkGr.cpp
+    src/gpu/ganesh/StencilMaskHelper.cpp
+    src/gpu/ganesh/SurfaceContext.cpp
+    src/gpu/ganesh/SurfaceDrawContext.cpp
+    src/gpu/ganesh/SurfaceFillContext.cpp
+    src/gpu/ganesh/effects/GrBezierEffect.cpp
+    src/gpu/ganesh/effects/GrBicubicEffect.cpp
+    src/gpu/ganesh/effects/GrBitmapTextGeoProc.cpp
+    src/gpu/ganesh/effects/GrBlendFragmentProcessor.cpp
+    src/gpu/ganesh/effects/GrColorTableEffect.cpp
+    src/gpu/ganesh/effects/GrConvexPolyEffect.cpp
+    src/gpu/ganesh/effects/GrCoverageSetOpXP.cpp
+    src/gpu/ganesh/effects/GrCustomXfermode.cpp
+    src/gpu/ganesh/effects/GrDisableColorXP.cpp
+    src/gpu/ganesh/effects/GrDistanceFieldGeoProc.cpp
+    src/gpu/ganesh/effects/GrMatrixEffect.cpp
+    src/gpu/ganesh/effects/GrModulateAtlasCoverageEffect.cpp
+    src/gpu/ganesh/effects/GrOvalEffect.cpp
+    src/gpu/ganesh/effects/GrPerlinNoise2Effect.cpp
+    src/gpu/ganesh/effects/GrPorterDuffXferProcessor.cpp
+    src/gpu/ganesh/effects/GrRRectEffect.cpp
+    src/gpu/ganesh/effects/GrShadowGeoProc.cpp
+    src/gpu/ganesh/effects/GrSkSLFP.cpp
+    src/gpu/ganesh/effects/GrTextureEffect.cpp
+    src/gpu/ganesh/effects/GrYUVtoRGBEffect.cpp
+    src/gpu/ganesh/geometry/GrAAConvexTessellator.cpp
+    src/gpu/ganesh/geometry/GrAATriangulator.cpp
+    src/gpu/ganesh/geometry/GrPathUtils.cpp
+    src/gpu/ganesh/geometry/GrQuad.cpp
+    src/gpu/ganesh/geometry/GrQuadUtils.cpp
+    src/gpu/ganesh/geometry/GrShape.cpp
+    src/gpu/ganesh/geometry/GrStyledShape.cpp
+    src/gpu/ganesh/geometry/GrTriangulator.cpp
+    src/gpu/ganesh/gl/AHardwareBufferGL.cpp
+    src/gpu/ganesh/gl/GrGLAssembleGLESInterfaceAutogen.cpp
+    src/gpu/ganesh/gl/GrGLAssembleGLInterfaceAutogen.cpp
+    src/gpu/ganesh/gl/GrGLAssembleHelpers.cpp
+    src/gpu/ganesh/gl/GrGLAssembleInterface.cpp
+    src/gpu/ganesh/gl/GrGLAssembleWebGLInterfaceAutogen.cpp
+    src/gpu/ganesh/gl/GrGLAttachment.cpp
+    src/gpu/ganesh/gl/GrGLBackendSurface.cpp
+    src/gpu/ganesh/gl/GrGLBuffer.cpp
+    src/gpu/ganesh/gl/GrGLCaps.cpp
+    src/gpu/ganesh/gl/GrGLContext.cpp
+    src/gpu/ganesh/gl/GrGLDirectContext.cpp
+    src/gpu/ganesh/gl/GrGLExtensions.cpp
+    src/gpu/ganesh/gl/GrGLGLSL.cpp
+    src/gpu/ganesh/gl/GrGLGpu.cpp
+    src/gpu/ganesh/gl/GrGLGpuProgramCache.cpp
+    src/gpu/ganesh/gl/GrGLInterfaceAutogen.cpp
+    src/gpu/ganesh/gl/GrGLOpsRenderPass.cpp
+    src/gpu/ganesh/gl/GrGLProgram.cpp
+    src/gpu/ganesh/gl/GrGLProgramDataManager.cpp
+    src/gpu/ganesh/gl/GrGLRenderTarget.cpp
+    src/gpu/ganesh/gl/GrGLSemaphore.cpp
+    src/gpu/ganesh/gl/GrGLTexture.cpp
+    src/gpu/ganesh/gl/GrGLTextureRenderTarget.cpp
+    src/gpu/ganesh/gl/GrGLTypesPriv.cpp
+    src/gpu/ganesh/gl/GrGLUniformHandler.cpp
+    src/gpu/ganesh/gl/GrGLUtil.cpp
+    src/gpu/ganesh/gl/GrGLVertexArray.cpp
+    src/gpu/ganesh/gl/builders/GrGLProgramBuilder.cpp
+    src/gpu/ganesh/gl/builders/GrGLShaderStringBuilder.cpp
+    src/gpu/ganesh/glsl/GrGLSLBlend.cpp
+    src/gpu/ganesh/glsl/GrGLSLFragmentShaderBuilder.cpp
+    src/gpu/ganesh/glsl/GrGLSLProgramBuilder.cpp
+    src/gpu/ganesh/glsl/GrGLSLProgramDataManager.cpp
+    src/gpu/ganesh/glsl/GrGLSLShaderBuilder.cpp
+    src/gpu/ganesh/glsl/GrGLSLUniformHandler.cpp
+    src/gpu/ganesh/glsl/GrGLSLVarying.cpp
+    src/gpu/ganesh/glsl/GrGLSLVertexGeoBuilder.cpp
+    src/gpu/ganesh/gradients/GrGradientBitmapCache.cpp
+    src/gpu/ganesh/gradients/GrGradientShader.cpp
+    src/gpu/ganesh/image/GrImageUtils.cpp
+    src/gpu/ganesh/image/GrTextureGenerator.cpp
+    src/gpu/ganesh/image/SkImage_Ganesh.cpp
+    src/gpu/ganesh/image/SkImage_GaneshBase.cpp
+    src/gpu/ganesh/image/SkImage_GaneshFactories.cpp
+    src/gpu/ganesh/image/SkImage_GaneshYUVA.cpp
+    src/gpu/ganesh/image/SkImage_LazyTexture.cpp
+    src/gpu/ganesh/image/SkImage_RasterPinnable.cpp
+    src/gpu/ganesh/image/SkSpecialImage_Ganesh.cpp
+    src/gpu/ganesh/mock/GrMockCaps.cpp
+    src/gpu/ganesh/mock/GrMockGpu.cpp
+    src/gpu/ganesh/mock/GrMockTypes.cpp
+    src/gpu/ganesh/ops/AAConvexPathRenderer.cpp
+    src/gpu/ganesh/ops/AAHairLinePathRenderer.cpp
+    src/gpu/ganesh/ops/AALinearizingConvexPathRenderer.cpp
+    src/gpu/ganesh/ops/AtlasInstancedHelper.cpp
+    src/gpu/ganesh/ops/AtlasPathRenderer.cpp
+    src/gpu/ganesh/ops/AtlasRenderTask.cpp
+    src/gpu/ganesh/ops/AtlasTextOp.cpp
+    src/gpu/ganesh/ops/ClearOp.cpp
+    src/gpu/ganesh/ops/DashLinePathRenderer.cpp
+    src/gpu/ganesh/ops/DashOp.cpp
+    src/gpu/ganesh/ops/DefaultPathRenderer.cpp
+    src/gpu/ganesh/ops/DrawAtlasOp.cpp
+    src/gpu/ganesh/ops/DrawAtlasPathOp.cpp
+    src/gpu/ganesh/ops/DrawMeshOp.cpp
+    src/gpu/ganesh/ops/DrawableOp.cpp
+    src/gpu/ganesh/ops/FillRRectOp.cpp
+    src/gpu/ganesh/ops/FillRectOp.cpp
+    src/gpu/ganesh/ops/GrMeshDrawOp.cpp
+    src/gpu/ganesh/ops/GrOp.cpp
+    src/gpu/ganesh/ops/GrOvalOpFactory.cpp
+    src/gpu/ganesh/ops/GrSimpleMeshDrawOpHelper.cpp
+    src/gpu/ganesh/ops/GrSimpleMeshDrawOpHelperWithStencil.cpp
+    src/gpu/ganesh/ops/LatticeOp.cpp
+    src/gpu/ganesh/ops/OpsTask.cpp
+    src/gpu/ganesh/ops/PathInnerTriangulateOp.cpp
+    src/gpu/ganesh/ops/PathStencilCoverOp.cpp
+    src/gpu/ganesh/ops/PathTessellateOp.cpp
+    src/gpu/ganesh/ops/QuadPerEdgeAA.cpp
+    src/gpu/ganesh/ops/RegionOp.cpp
+    src/gpu/ganesh/ops/ShadowRRectOp.cpp
+    src/gpu/ganesh/ops/SmallPathAtlasMgr.cpp
+    src/gpu/ganesh/ops/SmallPathRenderer.cpp
+    src/gpu/ganesh/ops/SmallPathShapeData.cpp
+    src/gpu/ganesh/ops/SoftwarePathRenderer.cpp
+    src/gpu/ganesh/ops/StrokeRectOp.cpp
+    src/gpu/ganesh/ops/StrokeTessellateOp.cpp
+    src/gpu/ganesh/ops/TessellationPathRenderer.cpp
+    src/gpu/ganesh/ops/TextureOp.cpp
+    src/gpu/ganesh/ops/TriangulatingPathRenderer.cpp
+    src/gpu/ganesh/surface/SkSurface_Ganesh.cpp
+    src/gpu/ganesh/tessellate/GrPathTessellationShader.cpp
+    src/gpu/ganesh/tessellate/GrStrokeTessellationShader.cpp
+    src/gpu/ganesh/tessellate/GrTessellationShader.cpp
+    src/gpu/ganesh/tessellate/PathTessellator.cpp
+    src/gpu/ganesh/tessellate/StrokeTessellator.cpp
+    src/gpu/ganesh/text/GrAtlasManager.cpp
+  
     src/gpu/AtlasTypes.cpp
     src/gpu/Blend.cpp
     src/gpu/BlendFormula.cpp
@@ -676,250 +909,8 @@ set(skia_sources
     modules/skcms/skcms.cc
 )
 
-if(SKIA_GANESH)
-  list(APPEND skia_sources
-  src/gpu/ganesh/ClipStack.cpp
-  src/gpu/ganesh/Device.cpp
-  src/gpu/ganesh/Device_drawTexture.cpp
-  src/gpu/ganesh/GrAHardwareBufferImageGenerator.cpp
-  src/gpu/ganesh/GrAHardwareBufferUtils.cpp
-  src/gpu/ganesh/GrAttachment.cpp
-  src/gpu/ganesh/GrAuditTrail.cpp
-  src/gpu/ganesh/GrBackendSemaphore.cpp
-  src/gpu/ganesh/GrBackendSurface.cpp
-  src/gpu/ganesh/GrBackendTextureImageGenerator.cpp
-  src/gpu/ganesh/GrBackendUtils.cpp
-  src/gpu/ganesh/GrBlurUtils.cpp
-  src/gpu/ganesh/GrBufferAllocPool.cpp
-  src/gpu/ganesh/GrBufferTransferRenderTask.cpp
-  src/gpu/ganesh/GrBufferUpdateRenderTask.cpp
-  src/gpu/ganesh/GrCanvas.cpp
-  src/gpu/ganesh/GrCaps.cpp
-  src/gpu/ganesh/GrClientMappedBufferManager.cpp
-  src/gpu/ganesh/GrColorInfo.cpp
-  src/gpu/ganesh/GrColorSpaceXform.cpp
-  src/gpu/ganesh/GrContextThreadSafeProxy.cpp
-  src/gpu/ganesh/GrContext_Base.cpp
-  src/gpu/ganesh/GrCopyRenderTask.cpp
-  src/gpu/ganesh/GrDDLContext.cpp
-  src/gpu/ganesh/GrDDLTask.cpp
-  src/gpu/ganesh/GrDataUtils.cpp
-  src/gpu/ganesh/GrDefaultGeoProcFactory.cpp
-  src/gpu/ganesh/GrDeferredDisplayList.cpp
-  src/gpu/ganesh/GrDeferredDisplayListRecorder.cpp
-  src/gpu/ganesh/GrDirectContext.cpp
-  src/gpu/ganesh/GrDirectContextPriv.cpp
-  src/gpu/ganesh/GrDistanceFieldGenFromVector.cpp
-  src/gpu/ganesh/GrDrawOpAtlas.cpp
-  src/gpu/ganesh/GrDrawOpTest.cpp
-  src/gpu/ganesh/GrDrawingManager.cpp
-  src/gpu/ganesh/GrDriverBugWorkarounds.cpp
-  src/gpu/ganesh/GrDynamicAtlas.cpp
-  src/gpu/ganesh/GrEagerVertexAllocator.cpp
-  src/gpu/ganesh/GrFinishCallbacks.cpp
-  src/gpu/ganesh/GrFixedClip.cpp
-  src/gpu/ganesh/GrFragmentProcessor.cpp
-  src/gpu/ganesh/GrFragmentProcessors.cpp
-  src/gpu/ganesh/GrGeometryProcessor.cpp
-  src/gpu/ganesh/GrGpu.cpp
-  src/gpu/ganesh/GrGpuBuffer.cpp
-  src/gpu/ganesh/GrGpuResource.cpp
-  src/gpu/ganesh/GrImageContext.cpp
-  src/gpu/ganesh/GrImageInfo.cpp
-  src/gpu/ganesh/GrManagedResource.cpp
-  src/gpu/ganesh/GrMemoryPool.cpp
-  src/gpu/ganesh/GrMeshBuffers.cpp
-  src/gpu/ganesh/GrMeshDrawTarget.cpp
-  src/gpu/ganesh/GrOnFlushResourceProvider.cpp
-  src/gpu/ganesh/GrOpFlushState.cpp
-  src/gpu/ganesh/GrOpsRenderPass.cpp
-  src/gpu/ganesh/GrPaint.cpp
-  src/gpu/ganesh/GrPersistentCacheUtils.cpp
-  src/gpu/ganesh/GrPipeline.cpp
-  src/gpu/ganesh/GrProcessor.cpp
-  src/gpu/ganesh/GrProcessorAnalysis.cpp
-  src/gpu/ganesh/GrProcessorSet.cpp
-  src/gpu/ganesh/GrProcessorUnitTest.cpp
-  src/gpu/ganesh/GrProgramDesc.cpp
-  src/gpu/ganesh/GrProgramInfo.cpp
-  src/gpu/ganesh/GrPromiseImageTexture.cpp
-  src/gpu/ganesh/GrProxyProvider.cpp
-  src/gpu/ganesh/GrRecordingContext.cpp
-  src/gpu/ganesh/GrRecordingContextPriv.cpp
-  src/gpu/ganesh/GrRenderTarget.cpp
-  src/gpu/ganesh/GrRenderTargetProxy.cpp
-  src/gpu/ganesh/GrRenderTask.cpp
-  src/gpu/ganesh/GrRenderTaskCluster.cpp
-  src/gpu/ganesh/GrResourceAllocator.cpp
-  src/gpu/ganesh/GrResourceCache.cpp
-  src/gpu/ganesh/GrResourceProvider.cpp
-  src/gpu/ganesh/GrRingBuffer.cpp
-  src/gpu/ganesh/GrSPIRVUniformHandler.cpp
-  src/gpu/ganesh/GrSPIRVVaryingHandler.cpp
-  src/gpu/ganesh/GrSWMaskHelper.cpp
-  src/gpu/ganesh/GrShaderCaps.cpp
-  src/gpu/ganesh/GrShaderVar.cpp
-  src/gpu/ganesh/GrStagingBufferManager.cpp
-  src/gpu/ganesh/GrStencilSettings.cpp
-  src/gpu/ganesh/GrStyle.cpp
-  src/gpu/ganesh/GrSurface.cpp
-  src/gpu/ganesh/GrSurfaceCharacterization.cpp
-  src/gpu/ganesh/GrSurfaceProxy.cpp
-  src/gpu/ganesh/GrSurfaceProxyView.cpp
-  src/gpu/ganesh/GrTestUtils.cpp
-  src/gpu/ganesh/GrTexture.cpp
-  src/gpu/ganesh/GrTextureProxy.cpp
-  src/gpu/ganesh/GrTextureRenderTargetProxy.cpp
-  src/gpu/ganesh/GrTextureResolveRenderTask.cpp
-  src/gpu/ganesh/GrThreadSafeCache.cpp
-  src/gpu/ganesh/GrThreadSafePipelineBuilder.cpp
-  src/gpu/ganesh/GrTransferFromRenderTask.cpp
-  src/gpu/ganesh/GrUniformDataManager.cpp
-  src/gpu/ganesh/GrUtil.cpp
-  src/gpu/ganesh/GrVertexChunkArray.cpp
-  src/gpu/ganesh/GrWaitRenderTask.cpp
-  src/gpu/ganesh/GrWritePixelsRenderTask.cpp
-  src/gpu/ganesh/GrXferProcessor.cpp
-  src/gpu/ganesh/GrYUVABackendTextures.cpp
-  src/gpu/ganesh/GrYUVATextureProxies.cpp
-  src/gpu/ganesh/PathRenderer.cpp
-  src/gpu/ganesh/PathRendererChain.cpp
-  src/gpu/ganesh/SkGr.cpp
-  src/gpu/ganesh/StencilMaskHelper.cpp
-  src/gpu/ganesh/SurfaceContext.cpp
-  src/gpu/ganesh/SurfaceDrawContext.cpp
-  src/gpu/ganesh/SurfaceFillContext.cpp
-  src/gpu/ganesh/effects/GrBezierEffect.cpp
-  src/gpu/ganesh/effects/GrBicubicEffect.cpp
-  src/gpu/ganesh/effects/GrBitmapTextGeoProc.cpp
-  src/gpu/ganesh/effects/GrBlendFragmentProcessor.cpp
-  src/gpu/ganesh/effects/GrColorTableEffect.cpp
-  src/gpu/ganesh/effects/GrConvexPolyEffect.cpp
-  src/gpu/ganesh/effects/GrCoverageSetOpXP.cpp
-  src/gpu/ganesh/effects/GrCustomXfermode.cpp
-  src/gpu/ganesh/effects/GrDisableColorXP.cpp
-  src/gpu/ganesh/effects/GrDistanceFieldGeoProc.cpp
-  src/gpu/ganesh/effects/GrMatrixEffect.cpp
-  src/gpu/ganesh/effects/GrModulateAtlasCoverageEffect.cpp
-  src/gpu/ganesh/effects/GrOvalEffect.cpp
-  src/gpu/ganesh/effects/GrPerlinNoise2Effect.cpp
-  src/gpu/ganesh/effects/GrPorterDuffXferProcessor.cpp
-  src/gpu/ganesh/effects/GrRRectEffect.cpp
-  src/gpu/ganesh/effects/GrShadowGeoProc.cpp
-  src/gpu/ganesh/effects/GrSkSLFP.cpp
-  src/gpu/ganesh/effects/GrTextureEffect.cpp
-  src/gpu/ganesh/effects/GrYUVtoRGBEffect.cpp
-  src/gpu/ganesh/geometry/GrAAConvexTessellator.cpp
-  src/gpu/ganesh/geometry/GrAATriangulator.cpp
-  src/gpu/ganesh/geometry/GrPathUtils.cpp
-  src/gpu/ganesh/geometry/GrQuad.cpp
-  src/gpu/ganesh/geometry/GrQuadUtils.cpp
-  src/gpu/ganesh/geometry/GrShape.cpp
-  src/gpu/ganesh/geometry/GrStyledShape.cpp
-  src/gpu/ganesh/geometry/GrTriangulator.cpp
-  src/gpu/ganesh/gl/AHardwareBufferGL.cpp
-  src/gpu/ganesh/gl/GrGLAssembleGLESInterfaceAutogen.cpp
-  src/gpu/ganesh/gl/GrGLAssembleGLInterfaceAutogen.cpp
-  src/gpu/ganesh/gl/GrGLAssembleHelpers.cpp
-  src/gpu/ganesh/gl/GrGLAssembleInterface.cpp
-  src/gpu/ganesh/gl/GrGLAssembleWebGLInterfaceAutogen.cpp
-  src/gpu/ganesh/gl/GrGLAttachment.cpp
-  src/gpu/ganesh/gl/GrGLBackendSurface.cpp
-  src/gpu/ganesh/gl/GrGLBuffer.cpp
-  src/gpu/ganesh/gl/GrGLCaps.cpp
-  src/gpu/ganesh/gl/GrGLContext.cpp
-  src/gpu/ganesh/gl/GrGLDirectContext.cpp
-  src/gpu/ganesh/gl/GrGLExtensions.cpp
-  src/gpu/ganesh/gl/GrGLGLSL.cpp
-  src/gpu/ganesh/gl/GrGLGpu.cpp
-  src/gpu/ganesh/gl/GrGLGpuProgramCache.cpp
-  src/gpu/ganesh/gl/GrGLInterfaceAutogen.cpp
-  src/gpu/ganesh/gl/GrGLOpsRenderPass.cpp
-  src/gpu/ganesh/gl/GrGLProgram.cpp
-  src/gpu/ganesh/gl/GrGLProgramDataManager.cpp
-  src/gpu/ganesh/gl/GrGLRenderTarget.cpp
-  src/gpu/ganesh/gl/GrGLSemaphore.cpp
-  src/gpu/ganesh/gl/GrGLTexture.cpp
-  src/gpu/ganesh/gl/GrGLTextureRenderTarget.cpp
-  src/gpu/ganesh/gl/GrGLTypesPriv.cpp
-  src/gpu/ganesh/gl/GrGLUniformHandler.cpp
-  src/gpu/ganesh/gl/GrGLUtil.cpp
-  src/gpu/ganesh/gl/GrGLVertexArray.cpp
-  src/gpu/ganesh/gl/builders/GrGLProgramBuilder.cpp
-  src/gpu/ganesh/gl/builders/GrGLShaderStringBuilder.cpp
-  src/gpu/ganesh/glsl/GrGLSLBlend.cpp
-  src/gpu/ganesh/glsl/GrGLSLFragmentShaderBuilder.cpp
-  src/gpu/ganesh/glsl/GrGLSLProgramBuilder.cpp
-  src/gpu/ganesh/glsl/GrGLSLProgramDataManager.cpp
-  src/gpu/ganesh/glsl/GrGLSLShaderBuilder.cpp
-  src/gpu/ganesh/glsl/GrGLSLUniformHandler.cpp
-  src/gpu/ganesh/glsl/GrGLSLVarying.cpp
-  src/gpu/ganesh/glsl/GrGLSLVertexGeoBuilder.cpp
-  src/gpu/ganesh/gradients/GrGradientBitmapCache.cpp
-  src/gpu/ganesh/gradients/GrGradientShader.cpp
-  src/gpu/ganesh/image/GrImageUtils.cpp
-  src/gpu/ganesh/image/GrTextureGenerator.cpp
-  src/gpu/ganesh/image/SkImage_Ganesh.cpp
-  src/gpu/ganesh/image/SkImage_GaneshBase.cpp
-  src/gpu/ganesh/image/SkImage_GaneshFactories.cpp
-  src/gpu/ganesh/image/SkImage_GaneshYUVA.cpp
-  src/gpu/ganesh/image/SkImage_LazyTexture.cpp
-  src/gpu/ganesh/image/SkImage_RasterPinnable.cpp
-  src/gpu/ganesh/image/SkSpecialImage_Ganesh.cpp
-  src/gpu/ganesh/mock/GrMockCaps.cpp
-  src/gpu/ganesh/mock/GrMockGpu.cpp
-  src/gpu/ganesh/mock/GrMockTypes.cpp
-  src/gpu/ganesh/ops/AAConvexPathRenderer.cpp
-  src/gpu/ganesh/ops/AAHairLinePathRenderer.cpp
-  src/gpu/ganesh/ops/AALinearizingConvexPathRenderer.cpp
-  src/gpu/ganesh/ops/AtlasInstancedHelper.cpp
-  src/gpu/ganesh/ops/AtlasPathRenderer.cpp
-  src/gpu/ganesh/ops/AtlasRenderTask.cpp
-  src/gpu/ganesh/ops/AtlasTextOp.cpp
-  src/gpu/ganesh/ops/ClearOp.cpp
-  src/gpu/ganesh/ops/DashLinePathRenderer.cpp
-  src/gpu/ganesh/ops/DashOp.cpp
-  src/gpu/ganesh/ops/DefaultPathRenderer.cpp
-  src/gpu/ganesh/ops/DrawAtlasOp.cpp
-  src/gpu/ganesh/ops/DrawAtlasPathOp.cpp
-  src/gpu/ganesh/ops/DrawMeshOp.cpp
-  src/gpu/ganesh/ops/DrawableOp.cpp
-  src/gpu/ganesh/ops/FillRRectOp.cpp
-  src/gpu/ganesh/ops/FillRectOp.cpp
-  src/gpu/ganesh/ops/GrMeshDrawOp.cpp
-  src/gpu/ganesh/ops/GrOp.cpp
-  src/gpu/ganesh/ops/GrOvalOpFactory.cpp
-  src/gpu/ganesh/ops/GrSimpleMeshDrawOpHelper.cpp
-  src/gpu/ganesh/ops/GrSimpleMeshDrawOpHelperWithStencil.cpp
-  src/gpu/ganesh/ops/LatticeOp.cpp
-  src/gpu/ganesh/ops/OpsTask.cpp
-  src/gpu/ganesh/ops/PathInnerTriangulateOp.cpp
-  src/gpu/ganesh/ops/PathStencilCoverOp.cpp
-  src/gpu/ganesh/ops/PathTessellateOp.cpp
-  src/gpu/ganesh/ops/QuadPerEdgeAA.cpp
-  src/gpu/ganesh/ops/RegionOp.cpp
-  src/gpu/ganesh/ops/ShadowRRectOp.cpp
-  src/gpu/ganesh/ops/SmallPathAtlasMgr.cpp
-  src/gpu/ganesh/ops/SmallPathRenderer.cpp
-  src/gpu/ganesh/ops/SmallPathShapeData.cpp
-  src/gpu/ganesh/ops/SoftwarePathRenderer.cpp
-  src/gpu/ganesh/ops/StrokeRectOp.cpp
-  src/gpu/ganesh/ops/StrokeTessellateOp.cpp
-  src/gpu/ganesh/ops/TessellationPathRenderer.cpp
-  src/gpu/ganesh/ops/TextureOp.cpp
-  src/gpu/ganesh/ops/TriangulatingPathRenderer.cpp
-  src/gpu/ganesh/surface/SkSurface_Ganesh.cpp
-  src/gpu/ganesh/tessellate/GrPathTessellationShader.cpp
-  src/gpu/ganesh/tessellate/GrStrokeTessellationShader.cpp
-  src/gpu/ganesh/tessellate/GrTessellationShader.cpp
-  src/gpu/ganesh/tessellate/PathTessellator.cpp
-  src/gpu/ganesh/tessellate/StrokeTessellator.cpp
-  src/gpu/ganesh/text/GrAtlasManager.cpp
-  )
-endif()
-
 if(SKIA_PDF)
-list(APPEND skia_sources
+  list(APPEND skia_sources
     src/pdf/SkClusterator.cpp
     src/pdf/SkDeflate.cpp
     src/pdf/SkDocument_PDF_None.cpp
@@ -943,7 +934,7 @@ list(APPEND skia_sources
     src/pdf/SkPDFType1Font.cpp
     src/pdf/SkPDFTypes.cpp
     src/pdf/SkPDFUtils.cpp
-)
+  )
 endif()
 
 if(SKIA_PNG)
@@ -1009,8 +1000,6 @@ if(UNIX AND NOT MINGW)
               src/ports/SkDebug_stdio.cpp
               src/ports/SkOSFile_posix.cpp
               src/ports/SkOSLibrary_posix.cpp
-              src/gpu/ganesh/gl/egl/GrGLMakeEGLInterface.cpp
-              src/gpu/ganesh/gl/egl/GrGLMakeNativeInterface_egl.cpp
              )
   if(APPLE)
     list(APPEND skia_sources
@@ -1035,7 +1024,9 @@ if(UNIX AND NOT MINGW)
                 src/ports/SkFontMgr_fontconfig.cpp
                 src/ports/SkFontMgr_FontConfigInterface_factory.cpp
                 src/ports/SkFontMgr_FontConfigInterface.cpp
-               )
+                src/gpu/ganesh/gl/egl/GrGLMakeEGLInterface.cpp
+                src/gpu/ganesh/gl/egl/GrGLMakeNativeInterface_egl.cpp
+              )
   endif()
 endif()
 
@@ -1065,6 +1056,10 @@ elseif(SKIA_STATIC)
                    )
 endif()
 
+target_compile_definitions(skia PRIVATE SKIA_IMPLEMENTATION=1)
+target_compile_definitions(skia PUBLIC SK_RELEASE)
+target_compile_definitions(skia PUBLIC SK_GANESH)
+
 include(FetchContent)
 include(ExternalProject)
 
@@ -1074,53 +1069,20 @@ FetchContent_Declare(
   GIT_TAG VER-2-13-2
 )
 
-if(SKIA_WEBP)
-  FetchContent_Declare(
-    libwebp
-    GIT_REPOSITORY https://github.com/webmproject/libwebp.git
-    GIT_TAG main
-  )
-endif()
-
-if(SKIA_PNG)
-  FetchContent_Declare(
-    libpng
-    GIT_REPOSITORY https://github.com/glennrp/libpng.git
-    GIT_TAG v1.6.40
-  )
-endif()
-
-if(SKIA_PNG OR SKIA_PDF)
-  FetchContent_Declare(
-    zlib
-    GIT_REPOSITORY https://github.com/madler/zlib.git
-    GIT_TAG v1.3
-  )
-endif()
-
-if(SKIA_XML)
-  FetchContent_Declare(
-    expat
-    GIT_REPOSITORY https://github.com/libexpat/libexpat.git
-    GIT_TAG master
-  )
-endif()
-
-if(SKIA_XML)
-  FetchContent_Declare(
-    glfw
-    GIT_REPOSITORY https://github.com/glfw/glfw.git
-    GIT_TAG 3.3.8
-  )
-endif()
-
 set(FT_DISABLE_BROTLI ON CACHE BOOL "" FORCE)
 set(FT_DISABLE_BZIP2 ON CACHE BOOL "" FORCE)
 set(FT_DISABLE_PNG ON CACHE BOOL "" FORCE)
 set(FT_DISABLE_ZLIB ON CACHE BOOL "" FORCE)
 set(FT_DISABLE_HARFBUZZ ON CACHE BOOL "" FORCE)
 
+FetchContent_MakeAvailable(freetype)
+
 if(SKIA_WEBP)
+  FetchContent_Declare(
+    libwebp
+    GIT_REPOSITORY https://github.com/webmproject/libwebp.git
+    GIT_TAG main
+  )
   set(WEBP_BUILD_ANIM_UTILS OFF CACHE BOOL "" FORCE)
   set(WEBP_BUILD_CWEBP OFF CACHE BOOL "" FORCE)
   set(WEBP_BUILD_DWEBP OFF CACHE BOOL "" FORCE)
@@ -1133,85 +1095,86 @@ if(SKIA_WEBP)
   set(WEBP_BUILD_EXTRAS OFF CACHE BOOL "" FORCE)
 
   FetchContent_MakeAvailable(libwebp)
+
+  target_link_libraries(skia PRIVATE webp webpdemux)
+endif()
+
+if(SKIA_PNG OR SKIA_PDF)
+  FetchContent_Declare(
+    zlib
+    GIT_REPOSITORY https://github.com/daktronics/zlib.git
+    GIT_TAG develop
+  )
+  
+  set(ZLIB_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
+
+  FetchContent_MakeAvailable(zlib)
+  target_link_libraries(skia PRIVATE zlibstatic)
+  target_include_directories(skia PRIVATE 
+    ${zlib_SOURCE_DIR}
+    ${zlib_BINARY_DIR}
+  )
 endif()
 
 if(SKIA_PNG)
+  FetchContent_Declare(
+    libpng
+    GIT_REPOSITORY https://github.com/glennrp/libpng.git
+    GIT_TAG v1.6.40
+  )
+
   set(PNG_SHARED OFF CACHE BOOL "" FORCE)
   set(PNG_TESTS OFF CACHE BOOL "" FORCE)
   set(PNG_TOOLS OFF CACHE BOOL "" FORCE)
+
+  FetchContent_MakeAvailable(libpng)
+  target_link_libraries(skia PRIVATE libpng)
+  target_include_directories(skia PRIVATE 
+    ${libpng_SOURCE_DIR}
+    ${libpng_BINARY_DIR}
+  )
 endif()
 
 if(SKIA_GLFW)
+  FetchContent_Declare(
+    glfw
+    GIT_REPOSITORY https://github.com/glfw/glfw.git
+    GIT_TAG 3.3.8
+  )
+
   set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
   set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
   set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
   set(GLFW_INSTALL OFF CACHE BOOL "" FORCE)
 
   FetchContent_MakeAvailable(glfw)
-endif()
-
-FetchContent_MakeAvailable(freetype)
-
-if(SKIA_PNG)
-  FetchContent_MakeAvailable(libpng)
-endif()
-
-if(SKIA_PNG OR SKIA_PDF)
-  FetchContent_MakeAvailable(zlib)
+  target_link_libraries(skia PRIVATE glfw)
 endif()
 
 if(SKIA_XML)
+  FetchContent_Declare(
+    expat
+    GIT_REPOSITORY https://github.com/libexpat/libexpat.git
+    GIT_TAG master
+  )
+
   FetchContent_MakeAvailable(expat)
-endif()
-
-target_compile_definitions(skia PRIVATE SKIA_IMPLEMENTATION=1)
-target_compile_definitions(skia PUBLIC SK_RELEASE)
-
-if(SKIA_GANESH)
-  target_compile_definitions(skia PUBLIC SK_GANESH)
-endif()
-
-target_link_libraries(skia PUBLIC freetype)
-
-if(SKIA_WEBP)
-  target_link_libraries(skia PUBLIC webp webpdemux)
-endif()
-
-if(SKIA_PNG)
-  target_link_libraries(skia PUBLIC libpng)
-endif()
-
-if(SKIA_PNG OR SKIA_PDF)
-  target_link_libraries(skia PUBLIC zlibstatic)
-endif()
-
-if(SKIA_XML)
-  target_link_libraries(skia PUBLIC expat)
-endif()
-
-if(SKIA_GLFW)
-  target_link_libraries(skia PUBLIC glfw)
-endif()
-
-target_include_directories(skia PUBLIC 
-  ${freetype_SOURCE_DIR}/include
-)
-
-if(SKIA_PNG)
-  target_include_directories(skia PUBLIC 
-    ${libpng_SOURCE_DIR}
-    ${libpng_BINARY_DIR}
+  target_link_libraries(skia PRIVATE expat)
+  target_include_directories(skia PRIVATE 
+    ${expat_SOURCE_DIR}/expat
   )
 endif()
+
+target_link_libraries(skia PRIVATE freetype)
+target_include_directories(skia PRIVATE 
+  ${freetype_SOURCE_DIR}/include
+)
 
 if(APPLE)
   target_link_libraries(skia PRIVATE "-framework CoreText"
                                      "-framework CoreGraphics"
                                      "-framework Foundation"
   )
-elseif(UNIX AND NOT MINGW)
-  target_link_libraries(skia PUBLIC ${FREETYPE_LIBRARIES} fontconfig)
-  target_include_directories(skia PRIVATE ${FREETYPE_INCLUDE_DIRS})
 endif()
 
 target_include_directories(skia SYSTEM PUBLIC .)
