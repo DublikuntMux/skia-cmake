@@ -1128,7 +1128,7 @@ if(SKIA_PNG)
   set(PNG_TOOLS OFF CACHE BOOL "" FORCE)
 
   FetchContent_MakeAvailable(libpng)
-  target_link_libraries(skia PRIVATE libpng)
+  target_link_libraries(skia PRIVATE png_static)
   target_include_directories(skia PRIVATE 
     ${libpng_SOURCE_DIR}
     ${libpng_BINARY_DIR}
